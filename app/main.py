@@ -5,6 +5,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 from app.core.settings import settings
 from app.routers.user_routers import router as user_router
+from app.routers.category_routers import router as category_router
+from app.routers.product_routers import router as product_router
 
 # Criando a aplicação FastAPI
 app = FastAPI()
@@ -21,6 +23,8 @@ app.add_middleware(
 
 # Configurando rotas
 app.include_router(user_router, prefix=settings.PREFIX)
+app.include_router(category_router, prefix=settings.PREFIX)
+app.include_router(product_router, prefix=settings.PREFIX)
 
 
 # Tratamento de exceções

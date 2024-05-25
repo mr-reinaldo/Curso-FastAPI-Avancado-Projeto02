@@ -2,14 +2,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import status
 from fastapi.exceptions import HTTPException
-from app.core.settings import settings
 from app.core.security import security
 from app.core.auth import create_access_token, authenticate_user
 from app.models.user_model import UserModel
 from app.schemas.user_schema import UserSchemaCreate, UserSchemaUpdate, UserSchemaLogin
 from app.schemas.responses import Message, JWTToken
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from uuid import UUID
+from typing import List
 
 
 class UserController:
@@ -28,7 +28,7 @@ class UserController:
 
         return user
 
-    def get_all(self) -> list[UserModel]:
+    def get_all(self) -> List[UserModel]:
 
         users = self.db.query(UserModel).all()
 
@@ -47,7 +47,7 @@ class UserController:
             user_model = UserModel(**user.model_dump())
             self.db.add(user_model)
             self.db.commit()
-            self.db.refresh(user_model)
+
             return Message(status=True, message="User created successfully.")
         except IntegrityError:
             raise HTTPException(

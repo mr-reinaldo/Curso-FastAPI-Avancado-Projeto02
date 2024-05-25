@@ -26,8 +26,8 @@ class ProductSchemaBase(BaseModel):
 
     @field_validator("name")
     def validate_name(cls, value):
-        # Nome do produto deve conter apenas letras e no minimo 3 caracteres e no máximo 20
-        if not match(r"^[a-zA-Z]{3,20}$", value):
+        # Nome do produto deve conter apenas letras e no minimo 3 caracteres e no máximo 20 e pode conter espaços
+        if not match(r"^[a-zA-Z\s]{3,50}$", value):
             raise ValueError("Invalid product name.")
 
         return value
