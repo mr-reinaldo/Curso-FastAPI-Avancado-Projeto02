@@ -42,7 +42,7 @@ class UserSchemaCreate(UserSchemaBase):
         return value
 
 
-class UserSchemaUpdate(UserSchemaBase):
+class UserSchemaUpdate(BaseModel):
     username: Optional[str] = Field(None, description="The user's username.")
     email: Optional[EmailStr] = Field(None, description="The user's email.")
     password: Optional[str] = Field(None, description="The user's password.")
