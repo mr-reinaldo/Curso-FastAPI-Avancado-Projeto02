@@ -23,8 +23,8 @@ class UserSchemaBase(BaseModel):
 
     @field_validator("username")
     def validate_username(cls, value):
-        # Nome de usuário deve conter apenas letras e no minimo 3 caracteres e no máximo 20
-        if not match(r"^[a-zA-Z]{3,20}$", value):
+        # Nome de usuário deve conter letras maiúsculas, minúsculas e espaços entre palavras.
+        if not match(r"^[a-zA-Z ]{3,50}$", value):
             raise ValueError("Invalid username.")
 
         return value
@@ -49,8 +49,8 @@ class UserSchemaUpdate(BaseModel):
 
     @field_validator("username")
     def validate_username(cls, value):
-        # Nome de usuário deve conter apenas letras e no minimo 3 caracteres e no máximo 20
-        if not match(r"^[a-zA-Z]{3,20}$", value):
+        # Nome de usuário deve conter letras maiúsculas, minúsculas e espaços entre palavras.
+        if not match(r"^[a-zA-Z ]{3,50}$", value):
             raise ValueError("Invalid username.")
 
         return value

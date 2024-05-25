@@ -21,6 +21,7 @@ uvicorn = "^0.29.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
+faker = "^25.2.0"
 
 [tool.black]
 line-length = 88
