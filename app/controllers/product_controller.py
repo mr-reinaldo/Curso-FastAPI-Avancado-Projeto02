@@ -68,11 +68,6 @@ class ProductController:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Product already exists.",
             )
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Internal server error: {e}",
-            )
 
     def full_update(self, product: ProductSchemaUpdate, uuid: UUID) -> Message:
 
