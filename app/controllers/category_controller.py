@@ -9,9 +9,8 @@ from app.models.category_model import CategoryModel
 from app.schemas.category_schema import (
     CategorySchemaCreate,
     CategorySchemaUpdate,
-    ProductSchemaRead,
 )
-from typing import Optional, List
+from typing import List
 
 
 class CategoryController:
@@ -44,7 +43,7 @@ class CategoryController:
 
         return category
 
-    def create(self, category: CategorySchemaCreate) -> CategoryModel:
+    def create(self, category: CategorySchemaCreate) -> Message:
 
         category_model = CategoryModel(**category.model_dump())
 
@@ -85,7 +84,7 @@ class CategoryController:
 
         try:
             category_model.name = category.name
-            category_model.description = category.description
+            category_model.slug = category.slug
             category_model.updated_at = datetime.now(timezone.utc)
 
             self.db.commit()
@@ -112,8 +111,8 @@ class CategoryController:
         try:
             if category.name:
                 category_model.name = category.name
-            if category.description:
-                category_model.description = category.description
+            if category.slug:
+                category_model.slug = category.slug
 
             category_model.updated_at = datetime.now(timezone.utc)
 

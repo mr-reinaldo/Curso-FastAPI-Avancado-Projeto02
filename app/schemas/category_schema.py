@@ -26,7 +26,7 @@ class CategorySchemaBase(BaseModel):
     @field_validator("name")
     def validate_name(cls, value):
         # Nome da categoria deve conter apenas letras e no minimo 3 caracteres e no máximo 20
-        if not match(r"^[a-zA-Z]{3,20}$", value):
+        if not match(r"^[a-zA-Z\s]{3,20}$", value):
             raise ValueError("Invalid category name.")
 
         return value
