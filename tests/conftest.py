@@ -7,6 +7,8 @@ from app.models.category_model import CategoryModel
 from app.models.product_model import ProductModel
 from app.models.user_model import UserModel
 from app.core.security import security
+from app.controllers.user_controller import UserController
+from app.schemas.user_schema import UserSchemaLogin
 
 # Instância do Faker
 fake = Faker(config={"locale": "pt_BR"}, use_weighting=True)
@@ -25,6 +27,30 @@ def db_session():
         yield db
     finally:
         db.close()
+
+
+@fixture
+def get_token(user_on_db, db_session):
+    """
+    Função que retorna um token de autenticação.
+
+    Returns:
+        str: Um token de autenticação.
+    """
+
+    user = (
+        db_session.query(UserModel).filter(UserModel.email == user_on_db.email).first()
+    )
+
+    user_schema = UserSchemaLogin(
+        email=user.email,
+        password="password",
+    )
+
+    user_controller = UserController(db_session)
+    token = user_controller.login(user_schema)
+
+    return token.access_token
 
 
 @fixture
@@ -131,8 +157,8 @@ def users_on_db(db_session):
     users = []
 
     for _ in range(4):
-        user = UserModel(
-            username=fake.user_name(),
+        user = UserModel(  # substituir numeros por letras
+            username=fake.first_name(),
             email=fake.email(),
             password=security.get_password_hash(
                 fake.password(length=8, special_chars=True, digits=True)
