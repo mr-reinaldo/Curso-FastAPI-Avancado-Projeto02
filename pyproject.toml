@@ -19,11 +19,11 @@ python-jose = "^3.3.0"
 uvicorn = "^0.29.0"
 fastapi-pagination = "^0.12.24"
 pytz = "^2024.1"
-
+faker = "^25.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
-faker = "^25.2.0"
+
 
 [tool.black]
 line-length = 88

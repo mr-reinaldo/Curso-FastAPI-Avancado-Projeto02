@@ -6,7 +6,7 @@ services:
             dockerfile: Dockerfile
         container_name: fastapi
         command: >
-            bash -c "alembic upgrade head && fastapi run app/main.py --port 8000"
+            bash -c "alembic upgrade head && pytest && fastapi run app/main.py --port 8000"
         environment:
             DATABASE_URL: ${DATABASE_URL}
             JWT_SECRET: ${JWT_SECRET}
