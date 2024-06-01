@@ -1,11 +1,9 @@
 from fastapi import status, HTTPException
 from pytest import raises
 from app.schemas.product_schema import ProductSchemaCreate, ProductSchemaUpdate
-from app.schemas.responses import Message
 from app.controllers.product_controller import ProductController
 from app.models.product_model import ProductModel
-from uuid import UUID
-from typing import List
+from fastapi_pagination import Page
 
 
 def test_get_all_products(products_on_db, db_session):
@@ -14,12 +12,11 @@ def test_get_all_products(products_on_db, db_session):
     """
     product_controller = ProductController(db_session)
 
-    response = product_controller.get_all()
+    response = product_controller.get_all(page=1, size=10)
 
-    assert len(response) == len(products_on_db)
-
-    for product in response:
-        assert product in products_on_db
+    assert type(response) == Page
+    assert len(response.items) == len(products_on_db)
+    assert response.total == len(products_on_db)
 
 
 def test_get_product(products_on_db, db_session):

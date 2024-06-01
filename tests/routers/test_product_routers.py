@@ -98,9 +98,12 @@ def test_get_all_products(products_on_db, get_token):
         headers={"Authorization": f"Bearer {get_token}"},
     )
 
+    data = response.json()
+
     # Assert
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) == len(products_on_db)
+    assert data.get("total") == len(products_on_db)
+    assert len(data.get("items")) == len(products_on_db)
 
 
 def test_full_upgrade_product_router(products_on_db, get_token):

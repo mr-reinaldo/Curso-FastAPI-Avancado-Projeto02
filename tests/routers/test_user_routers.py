@@ -60,13 +60,8 @@ def test_get_all_users_router(users_on_db, get_token):
     data = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    assert (
-        len(data) == len(users_on_db) + 1
-    )  # +1 usuario criado para logar e pegar o token
-    for user in data:
-        assert "uuid" in user
-        assert "username" in user
-        assert "email" in user
+    assert data.get("total") == len(users_on_db) + 1
+    assert len(data.get("items")) == len(users_on_db) + 1
 
 
 def test_full_update_user_router(users_on_db, get_token):

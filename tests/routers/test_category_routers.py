@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 from fastapi import status
 from app.models.category_model import CategoryModel
 from app.core.settings import settings
+from fastapi_pagination import Page
 from app.main import app
 
 
@@ -75,12 +76,16 @@ def test_get_all_categories(categories_on_db, get_token):
     # Act
     response = client.get(
         f"{settings.PREFIX}/categories",
+        params={"page": 1, "size": 10},
         headers={"Authorization": f"Bearer {get_token}"},
     )
 
+    data = response.json()
+
     # Assert
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) == len(categories_on_db)
+    assert data.get("total") == len(categories_on_db)
+    assert len(data.get("items")) == len(categories_on_db)
 
 
 def test_full_upgrade_category_router(categories_on_db, get_token):

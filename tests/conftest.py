@@ -9,6 +9,7 @@ from app.models.user_model import UserModel
 from app.core.security import security
 from app.controllers.user_controller import UserController
 from app.schemas.user_schema import UserSchemaLogin
+from secrets import token_urlsafe
 
 # Instância do Faker
 fake = Faker(config={"locale": "pt_BR"}, use_weighting=True)
@@ -38,13 +39,14 @@ def get_token(user_on_db, db_session):
         str: Um token de autenticação.
     """
 
-    user = (
-        db_session.query(UserModel).filter(UserModel.email == user_on_db.email).first()
-    )
+    email = user_on_db["email"]
+    password = user_on_db["password"]
+
+    # user = db_session.query(UserModel).filter(UserModel.email == email).first()
 
     user_schema = UserSchemaLogin(
-        email=user.email,
-        password="password",
+        email=email,
+        password=password,
     )
 
     user_controller = UserController(db_session)
@@ -127,17 +129,18 @@ def user_on_db(db_session):
 
     """
 
+    password = token_urlsafe(20)
     user = UserModel(
-        username="userTest",
-        email="userteste@email.com",
-        password=security.get_password_hash("password"),
+        username="TestUser",
+        email="testuser@email.com",
+        password=security.get_password_hash(password),
     )
 
     db_session.add(user)
     db_session.commit()
     db_session.refresh(user)
 
-    yield user
+    yield {"email": user.email, "password": password}
 
     db_session.delete(user)
     db_session.commit()

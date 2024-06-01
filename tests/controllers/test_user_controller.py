@@ -1,5 +1,3 @@
-from pytest import raises
-from pydantic import ValidationError
 from app.schemas.user_schema import (
     UserSchemaCreate,
     UserSchemaUpdate,
@@ -8,6 +6,20 @@ from app.schemas.user_schema import (
 from app.schemas.responses import JWTToken
 from app.controllers.user_controller import UserController
 from app.models.user_model import UserModel
+from fastapi_pagination import Page
+
+
+def test_get_all_users(users_on_db, db_session):
+    """
+    Teste de busca de todos os usuários
+    """
+    user_controller = UserController(db_session)
+
+    response = user_controller.get_all(page=1, size=10)
+
+    assert type(response) == Page
+    assert len(response.items) == len(users_on_db)
+    assert response.total == len(users_on_db)
 
 
 def test_create_user(generate_fake_user, db_session):
@@ -119,8 +131,8 @@ def test_login_user(user_on_db, db_session):
     user_controller = UserController(db_session)
 
     fake_user = UserSchemaLogin(
-        email=user_on_db.email,
-        password="password",
+        email=user_on_db["email"],
+        password=user_on_db["password"],
     )
 
     response = user_controller.login(fake_user)

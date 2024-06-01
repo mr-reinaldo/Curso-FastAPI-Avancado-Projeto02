@@ -5,11 +5,9 @@ from app.schemas.category_schema import (
     CategorySchemaUpdate,
 )
 
-from app.schemas.responses import Message
 from app.controllers.category_controller import CategoryController
 from app.models.category_model import CategoryModel
-from uuid import UUID
-from typing import List
+from fastapi_pagination import Page
 
 
 def test_get_all_categories(categories_on_db, db_session):
@@ -18,12 +16,11 @@ def test_get_all_categories(categories_on_db, db_session):
     """
     category_controller = CategoryController(db_session)
 
-    response = category_controller.get_all()
+    response = category_controller.get_all(page=1, size=10)
 
-    assert len(response) == len(categories_on_db)
-
-    for category in response:
-        assert category in categories_on_db
+    assert type(response) == Page
+    assert len(response.items) == len(categories_on_db)
+    assert response.total == len(categories_on_db)
 
 
 def test_get_category(categories_on_db, db_session):

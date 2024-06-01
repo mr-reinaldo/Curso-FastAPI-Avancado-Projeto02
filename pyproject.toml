@@ -17,6 +17,8 @@ psycopg2-binary = "^2.9.9"
 passlib = "^1.7.4"
 python-jose = "^3.3.0"
 uvicorn = "^0.29.0"
+fastapi-pagination = "^0.12.24"
+pytz = "^2024.1"
 
 
 [tool.poetry.group.dev.dependencies]
