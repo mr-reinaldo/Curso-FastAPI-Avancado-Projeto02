@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_pagination import Page, add_pagination
 from app.controllers.user_controller import UserController
 from app.core.deps import db_session, get_current_user
 from app.schemas.user_schema import (
@@ -16,15 +17,18 @@ from typing import Optional, List
 router = APIRouter()
 
 
-@router.get("/users", response_model=List[UserSchemaBase], tags=["Users"])
+@router.get("/users", response_model=Page[UserSchemaBase], tags=["Users"])
 def get_users(
-    db: Session = Depends(db_session), current_user=Depends(get_current_user)
+    db: Session = Depends(db_session),
+    current_user=Depends(get_current_user),
+    page: int = Query(1, ge=1),
+    size: int = Query(10, ge=1, le=100),
 ):
     """
     Retorna uma lista de usuários.
     """
     user_controller = UserController(db)
-    return user_controller.get_all()
+    return user_controller.get_all(page=page, size=size)
 
 
 @router.get("/users/{uuid}", response_model=UserSchemaBase, tags=["Users"])
@@ -120,3 +124,7 @@ def delete_user(
     """
     user_controller = UserController(db)
     return user_controller.delete(uuid)
+
+
+# Adiciona paginação aos resultados
+add_pagination(router)

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime, UUID
 from app.core.settings import settings
-from datetime import datetime, timezone
+from datetime import datetime
+from pytz import timezone
 from uuid import uuid4
 
 
@@ -12,12 +13,14 @@ class UserModel(settings.DATABASE_BASE_MODEL):
     username = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime, nullable=False, default=datetime.now(timezone(settings.TIMEZONE))
+    )
     updated_at = Column(
         DateTime,
         nullable=False,
-        default=datetime.now(timezone.utc),
-        onupdate=datetime.now(timezone.utc),
+        default=datetime.now(timezone(settings.TIMEZONE)),
+        onupdate=datetime.now(timezone(settings.TIMEZONE)),
     )
 
     def __repr__(self):

@@ -3,34 +3,45 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import status
 from fastapi.exceptions import HTTPException
 from app.schemas.responses import Message
-from datetime import datetime, timezone
+from datetime import datetime
+from fastapi_pagination import Params, Page
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy.future import select
 from uuid import UUID
 from app.models.product_model import ProductModel
-from app.schemas.product_schema import (
-    ProductSchemaCreate,
-    ProductSchemaUpdate,
-    ProductSchemaRead,
-)
-from typing import Optional, List
+from app.schemas.product_schema import ProductSchemaCreate, ProductSchemaUpdate
 
 
 class ProductController:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> List[ProductModel]:
+    def get_all(self, page: int = 1, size: int = 50) -> Page[ProductModel]:
+        """
+        Método para retornar uma lista de produtos.
 
-        products = self.db.query(ProductModel).all()
+        Parâmetros:
+        - page: int (Página atual)
+        - size: int (Quantidade de registros por página)
 
-        if not products:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No products found.",
-            )
+        Retorno:
+        - Page[ProductModel] (Lista de produtos)
+        """
+        query = select(ProductModel).order_by(ProductModel.created_at.desc())
+        params = Params(page=page, size=size)
 
-        return products
+        return paginate(self.db, query, params)
 
     def get(self, uuid: UUID) -> ProductModel:
+        """
+        Método para retornar um produto.
+
+        Parâmetros:
+        - uuid: UUID (Identificador do produto)
+
+        Retorno:
+        - ProductModel (Produto)
+        """
 
         product = self.db.query(ProductModel).filter(ProductModel.uuid == uuid).first()
 
@@ -43,7 +54,15 @@ class ProductController:
         return product
 
     def create(self, product: ProductSchemaCreate) -> Message:
+        """
+        Método para criar um produto.
 
+        Parâmetros:
+        - product: ProductSchemaCreate (Produto)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+        """
         product_model = ProductModel(**product.model_dump())
 
         try:
@@ -70,7 +89,16 @@ class ProductController:
             )
 
     def full_update(self, product: ProductSchemaUpdate, uuid: UUID) -> Message:
+        """
+        Método para atualizar um produto.
 
+        Parâmetros:
+        - product: ProductSchemaUpdate (Produto)
+        - uuid: UUID (Identificador do produto)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+        """
         try:
             product_model = (
                 self.db.query(ProductModel).filter(ProductModel.uuid == uuid).first()
@@ -88,7 +116,7 @@ class ProductController:
             product_model.stock = product.stock
             product_model.category_uuid = product.category_uuid
 
-            product_model.updated_at = datetime.now(timezone.utc)
+            product_model.updated_at = datetime.now()
 
             self.db.commit()
 
@@ -100,7 +128,16 @@ class ProductController:
             )
 
     def partial_update(self, product: ProductSchemaUpdate, uuid: UUID) -> Message:
+        """
+        Método para atualizar parcialmente um produto.
 
+        Parâmetros:
+        - product: ProductSchemaUpdate (Produto)
+        - uuid: UUID (Identificador do produto)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+        """
         try:
             product_model = (
                 self.db.query(ProductModel).filter(ProductModel.uuid == uuid).first()
@@ -123,7 +160,7 @@ class ProductController:
             if product.category_uuid:
                 product_model.category_uuid = product.category_uuid
 
-            product_model.updated_at = datetime.now(timezone.utc)
+            product_model.updated_at = datetime.now()
 
             self.db.commit()
 
@@ -135,7 +172,15 @@ class ProductController:
             )
 
     def delete(self, uuid: UUID) -> Message:
+        """
+        Método para deletar um produto.
 
+        Parâmetros:
+        - uuid: UUID (Identificador do produto)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+        """
         product_model = (
             self.db.query(ProductModel).filter(ProductModel.uuid == uuid).first()
         )

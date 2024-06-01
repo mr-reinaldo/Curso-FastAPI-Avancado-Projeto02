@@ -37,6 +37,6 @@ async def validation_exception_handler(request, exc):
 
 
 # Health Check
-@app.get("/")
+@app.get("/", tags=["Health Check"], status_code=status.HTTP_200_OK)
 def health_check():
     return {"status": "ok"}

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic.types import UUID4
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional, List
 from re import match
 
@@ -11,6 +11,10 @@ class CategorySchemaBase(BaseModel):
     """
     Classe que representa a base do esquema de categoria.
     """
+
+    model_config: ConfigDict = ConfigDict(
+        from_attributes=True,
+    )
 
     uuid: Optional[UUID4] = Field(None, description="The category's UUID.")
     name: str = Field(..., description="The category's name.")
@@ -26,7 +30,7 @@ class CategorySchemaBase(BaseModel):
     @field_validator("name")
     def validate_name(cls, value):
         # Nome da categoria deve conter apenas letras e no minimo 3 caracteres e no máximo 20
-        if not match(r"^[a-zA-Z\s]{3,20}$", value):
+        if not match(r"^[a-zA-Z0-9\s]{3,20}$", value):
             raise ValueError("Invalid category name.")
 
         return value
@@ -34,7 +38,7 @@ class CategorySchemaBase(BaseModel):
     @field_validator("slug")
     def validate_slug(cls, value):
         # O slug deve conter apenas letras minúsculas, traços e sublinhados
-        if not match(r"^([a-z]|-|_)+$", value):
+        if not match(r"^([a-z0-9]|-|_)+$", value):
             raise ValueError("Invalid category slug.")
 
         return value

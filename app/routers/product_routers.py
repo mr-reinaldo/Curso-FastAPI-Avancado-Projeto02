@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
+from fastapi_pagination import Page, add_pagination
 from app.core.deps import db_session, get_current_user
 from app.models.product_model import ProductModel
 from app.controllers.product_controller import ProductController
@@ -18,18 +19,21 @@ router = APIRouter()
 
 @router.get(
     "/products",
-    response_model=List[ProductSchemaRead],
+    response_model=Page[ProductSchemaRead],
     tags=["Products"],
     status_code=status.HTTP_200_OK,
 )
 def get_products(
-    db: Session = Depends(db_session), current_user=Depends(get_current_user)
+    db: Session = Depends(db_session),
+    current_user=Depends(get_current_user),
+    page: int = Query(1, ge=1),
+    size: int = Query(10, ge=1, le=100),
 ):
     """
     Retorna uma lista de produtos.
     """
     product_controller = ProductController(db)
-    return product_controller.get_all()
+    return product_controller.get_all(page=page, size=size)
 
 
 @router.get(
@@ -122,3 +126,7 @@ def delete_product(
     """
     product_controller = ProductController(db)
     return product_controller.delete(uuid)
+
+
+# Adiciona paginação aos resultados
+add_pagination(router)

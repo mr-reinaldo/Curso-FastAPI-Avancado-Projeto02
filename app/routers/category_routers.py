@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
+from fastapi_pagination import Page, add_pagination
 from sqlalchemy.orm import Session
 from app.core.deps import db_session, get_current_user
-from app.models.category_model import CategoryModel
 from app.controllers.category_controller import CategoryController
 from app.schemas.category_schema import (
     CategorySchemaRead,
@@ -10,7 +10,7 @@ from app.schemas.category_schema import (
 )
 from app.schemas.responses import Message
 from uuid import UUID
-from typing import Optional, List
+from typing import List
 
 
 router = APIRouter()
@@ -18,18 +18,21 @@ router = APIRouter()
 
 @router.get(
     "/categories",
-    response_model=List[CategorySchemaRead],
+    response_model=Page[CategorySchemaRead],
     tags=["Categories"],
     status_code=status.HTTP_200_OK,
 )
 def get_categories(
-    db: Session = Depends(db_session), current_user=Depends(get_current_user)
+    db: Session = Depends(db_session),
+    current_user=Depends(get_current_user),
+    page: int = Query(1, ge=1),
+    size: int = Query(10, ge=1, le=100),
 ):
     """
     Retorna uma lista de categorias.
     """
     category_controller = CategoryController(db)
-    return category_controller.get_all()
+    return category_controller.get_all(page, size)
 
 
 @router.get(
@@ -122,3 +125,7 @@ def delete_category(
     """
     category_controller = CategoryController(db)
     return category_controller.delete(uuid)
+
+
+# Adiciona paginação aos endpoints
+add_pagination(router)

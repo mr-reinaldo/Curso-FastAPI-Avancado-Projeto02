@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, DateTime, UUID
 from sqlalchemy.orm import relationship
 from app.core.settings import settings
-from datetime import datetime, timezone
+from datetime import datetime
+from pytz import timezone
 from uuid import uuid4
 
 
@@ -12,12 +13,14 @@ class CategoryModel(settings.DATABASE_BASE_MODEL):
     uuid = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     name = Column(String, nullable=False)
     slug = Column(String, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime, nullable=False, default=datetime.now(timezone(settings.TIMEZONE))
+    )
     updated_at = Column(
         DateTime,
         nullable=False,
-        default=datetime.now(timezone.utc),
-        onupdate=datetime.now(timezone.utc),
+        default=datetime.now(timezone(settings.TIMEZONE)),
+        onupdate=datetime.now(timezone(settings.TIMEZONE)),
     )
 
     products = relationship(

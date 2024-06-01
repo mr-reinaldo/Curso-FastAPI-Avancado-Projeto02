@@ -4,12 +4,14 @@ from fastapi import status
 from fastapi.exceptions import HTTPException
 from app.core.security import security
 from app.core.auth import create_access_token, authenticate_user
+from fastapi_pagination import Params, Page
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy.future import select
 from app.models.user_model import UserModel
 from app.schemas.user_schema import UserSchemaCreate, UserSchemaUpdate, UserSchemaLogin
 from app.schemas.responses import Message, JWTToken
-from datetime import datetime, timezone
+from datetime import datetime
 from uuid import UUID
-from typing import List
 
 
 class UserController:
@@ -17,7 +19,15 @@ class UserController:
         self.db = db
 
     def get(self, uuid: UUID) -> UserModel:
+        """
+        Método para retornar um usuário.
 
+        Parâmetros:
+        - uuid: UUID (Identificador do usuário)
+
+        Retorno:
+        - UserModel (Usuário)
+        """
         user = self.db.query(UserModel).filter(UserModel.uuid == uuid).first()
 
         if not user:
@@ -28,19 +38,33 @@ class UserController:
 
         return user
 
-    def get_all(self) -> List[UserModel]:
+    def get_all(self, page: int = 1, size: int = 50) -> Page[UserModel]:
+        """
+        Método para retornar uma lista de usuários.
 
-        users = self.db.query(UserModel).all()
+        Parâmetros:
+        - page: int (Página atual)
+        - size: int (Quantidade de registros por página)
 
-        if not users:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No users found.",
-            )
+        Retorno:
+        - Page[UserModel] (Lista de usuários)
+        """
 
-        return users
+        query = select(UserModel).order_by(UserModel.created_at.desc())
+        params = Params(page=page, size=size)
+        return paginate(self.db, query, params)
 
     def create(self, user: UserSchemaCreate) -> Message:
+        """
+        Método para criar um usuário.
+
+        Parâmetros:
+        - user: UserSchemaCreate (Usuário)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+
+        """
 
         try:
             user.password = security.get_password_hash(user.password)
@@ -61,6 +85,17 @@ class UserController:
             )
 
     def full_update(self, user: UserSchemaUpdate, uuid: UUID) -> Message:
+        """
+        Método para atualizar um usuário.
+
+        Parâmetros:
+        - user: UserSchemaUpdate (Usuário)
+        - uuid: UUID (Identificador do usuário)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+
+        """
 
         user_model = self.db.query(UserModel).filter(UserModel.uuid == uuid).first()
 
@@ -73,12 +108,23 @@ class UserController:
         user_model.username = user.username
         user_model.email = user.email
         user_model.password = security.get_password_hash(user.password)
-        user_model.updated_at = datetime.now(timezone.utc)
+        user_model.updated_at = datetime.now()
 
         self.db.commit()
         return Message(status=True, message="User updated successfully.")
 
     def partial_update(self, user: UserSchemaUpdate, uuid: UUID) -> Message:
+        """
+        Método para atualizar parcialmente um usuário.
+
+        Parâmetros:
+        - user: UserSchemaUpdate (Usuário)
+        - uuid: UUID (Identificador do usuário)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+
+        """
 
         user_model = self.db.query(UserModel).filter(UserModel.uuid == uuid).first()
 
@@ -95,12 +141,21 @@ class UserController:
         if user.password:
             user_model.password = security.get_password_hash(user.password)
 
-        user_model.updated_at = datetime.now(timezone.utc)
+        user_model.updated_at = datetime.now()
 
         self.db.commit()
         return Message(status=True, message="User updated successfully.")
 
     def login(self, user: UserSchemaLogin) -> JWTToken:
+        """
+        Método para realizar login.
+
+        Parâmetros:
+        - user: UserSchemaLogin (Usuário)
+
+        Retorno:
+        - JWTToken (Token de autenticação)
+        """
 
         user = authenticate_user(user.email, user.password, self.db)
 
@@ -116,7 +171,16 @@ class UserController:
         )
 
     def delete(self, uuid: UUID) -> Message:
+        """
+        Método para deletar um usuário.
 
+        Parâmetros:
+        - uuid: UUID (Identificador do usuário)
+
+        Retorno:
+        - Message (Mensagem de retorno)
+
+        """
         user = self.db.query(UserModel).filter(UserModel.uuid == uuid).first()
 
         if not user:

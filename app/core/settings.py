@@ -31,9 +31,8 @@ class Settings(BaseSettings):
     JWT_EXPIRATION: int = env_config("JWT_EXPIRATION", cast=int)
 
     # Configurações do FastAPI
-    HOST: str = env_config("HOST")
-    PORT: int = env_config("PORT")
     PREFIX: str = "/api/v1"
+    TIMEZONE: str = env_config("TIMEZONE")
 
 
 # Instanciando as configurações

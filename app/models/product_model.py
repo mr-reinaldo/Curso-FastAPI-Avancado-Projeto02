@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, Float, DateTime, UUID, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from app.core.settings import settings
-from datetime import datetime, timezone
+from datetime import datetime
+from pytz import timezone
 from uuid import uuid4
 
 
@@ -17,12 +18,14 @@ class ProductModel(settings.DATABASE_BASE_MODEL):
     price = Column(Float, nullable=False)
     stock = Column(Integer, nullable=False)
 
-    created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime, nullable=False, default=datetime.now(timezone(settings.TIMEZONE))
+    )
     updated_at = Column(
         DateTime,
         nullable=False,
-        default=datetime.now(timezone.utc),
-        onupdate=datetime.now(timezone.utc),
+        default=datetime.now(timezone(settings.TIMEZONE)),
+        onupdate=datetime.now(timezone(settings.TIMEZONE)),
     )
 
     category = relationship("CategoryModel", back_populates="products", lazy="joined")
