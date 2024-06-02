@@ -4,6 +4,8 @@
 
 Este projeto consiste em uma API para gerenciar usuários, produtos e categorias de produtos. Desenvolvida com FastAPI, PostgreSQL, Docker e Docker Compose, a API fornece funcionalidades essenciais para criação, edição, exclusão e listagem de usuários, produtos e categorias.
 
+![Peek 02-06-2024 19-03](https://github.com/mr-reinaldo/Curso-FastAPI-Avancado-Projeto02/assets/88012242/a1da6acd-1a33-48ad-aa48-942e1ffc8b74)
+
 ## Funcionalidades
 
 **1. Autenticação de Usuário:**
@@ -95,8 +97,8 @@ cp .env.example .env
 docker compose up -d
 ```
 
-* Acesse a documentação da API em <http://localhost:8000/docs>.
-
+* Acesse a documentação Swagger da API em <http://localhost:8000/docs>.
+* Acesse a documentação ReDoc da API em <http://localhost:8000/redoc>.
 * Para parar os serviços, execute o comando docker-compose down:
 
 ```bash
