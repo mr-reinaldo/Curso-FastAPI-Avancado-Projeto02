@@ -6,6 +6,8 @@ Este projeto consiste em uma API para gerenciar usuários, produtos e categorias
 
 ![Peek 02-06-2024 19-03](https://github.com/mr-reinaldo/Curso-FastAPI-Avancado-Projeto02/assets/88012242/a1da6acd-1a33-48ad-aa48-942e1ffc8b74)
 
+![Peek 02-06-2024 19-15](https://github.com/mr-reinaldo/Curso-FastAPI-Avancado-Projeto02/assets/88012242/42897913-87a4-4f9d-8407-cd9280b33a9e)
+
 ## Funcionalidades
 
 **1. Autenticação de Usuário:**
