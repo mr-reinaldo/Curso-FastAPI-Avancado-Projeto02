@@ -1,25 +1,11 @@
 from pytest import raises
+from typing import Dict, Any
 from pydantic import ValidationError
 from app.schemas.user_schema import UserSchemaCreate, UserSchemaUpdate, UserSchemaLogin
-from faker import Faker
-from datetime import datetime
-from uuid import uuid4
-
-# Instância do Faker
-fake = Faker()
-
-# Criação de um objeto Faker
-fake_user = {
-    "uuid": uuid4(),
-    "username": fake.name(),
-    "email": fake.email(),
-    "password": fake.password(length=8, special_chars=True, digits=True),
-    "created_at": datetime.now(),
-    "updated_at": datetime.now(),
-}
+from uuid import UUID
 
 
-def test_user_schema_create():
+def test_user_schema_create(generate_fake_user: Dict[str, Any]):
     """
     Teste de criação de um objeto UserSchemaCreate
 
@@ -29,18 +15,15 @@ def test_user_schema_create():
     """
 
     # Criação de um objeto UserSchemaCreate
-    user = UserSchemaCreate(**fake_user)
-
-    # Print do objeto criado
-    print(user)
+    user = UserSchemaCreate(**generate_fake_user)
 
     # Testes de sucesso
-    assert user.uuid == fake_user["uuid"]
-    assert user.username == fake_user["username"]
-    assert user.email == fake_user["email"]
-    assert user.password == fake_user["password"]
-    assert user.created_at == fake_user["created_at"]
-    assert user.updated_at == fake_user["updated_at"]
+    assert user.uuid == UUID(generate_fake_user["uuid"])
+    assert user.username == generate_fake_user["username"]
+    assert user.email == generate_fake_user["email"]
+    assert user.password == generate_fake_user["password"]
+    assert user.created_at == generate_fake_user["created_at"]
+    assert user.updated_at == generate_fake_user["updated_at"]
 
 
 def test_user_schema_create_error():
@@ -63,7 +46,7 @@ def test_user_schema_create_error():
         UserSchemaCreate(**{"password": "test"})
 
 
-def test_user_schema_update():
+def test_user_schema_update(generate_fake_user: Dict[str, Any]):
     """
     Teste de criação de um objeto UserSchemaUpdate
 
@@ -74,18 +57,15 @@ def test_user_schema_update():
 
     # Criação de um objeto UserSchemaUpdate
     user = UserSchemaUpdate(
-        username=fake_user["username"],
-        email=fake_user["email"],
-        password=fake_user["password"],
+        username=generate_fake_user["username"],
+        email=generate_fake_user["email"],
+        password=generate_fake_user["password"],
     )
 
-    # Print do objeto criado
-    print(user)
-
     # Testes de sucesso
-    assert user.username == fake_user["username"]
-    assert user.email == fake_user["email"]
-    assert user.password == fake_user["password"]
+    assert user.username == generate_fake_user["username"]
+    assert user.email == generate_fake_user["email"]
+    assert user.password == generate_fake_user["password"]
 
 
 def test_user_schema_update_error():
@@ -106,7 +86,7 @@ def test_user_schema_update_error():
         UserSchemaUpdate(**{"password": "test"})
 
 
-def test_user_schema_login():
+def test_user_schema_login(generate_fake_user: Dict[str, Any]):
     """
     Teste de criação de um objeto UserSchemaLogin
 
@@ -116,14 +96,16 @@ def test_user_schema_login():
     """
 
     # Criação de um objeto UserSchemaLogin
-    user = UserSchemaLogin(email=fake_user["email"], password=fake_user["password"])
+    user = UserSchemaLogin(
+        email=generate_fake_user["email"], password=generate_fake_user["password"]
+    )
 
     # Print do objeto criado
     print(user)
 
     # Testes de sucesso
-    assert user.email == fake_user["email"]
-    assert user.password == fake_user["password"]
+    assert user.email == generate_fake_user["email"]
+    assert user.password == generate_fake_user["password"]
 
 
 def test_user_schema_login_error():

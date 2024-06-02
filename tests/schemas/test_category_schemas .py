@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from pytest import raises
 from pydantic import ValidationError
 from app.schemas.category_schema import (
@@ -9,7 +10,7 @@ from uuid import UUID
 from datetime import datetime
 
 
-def test_category_schema_create(generate_fake_category):
+def test_category_schema_create(generate_fake_category: Dict[str, Any]):
     """
     Teste de criação de um objeto CategorySchemaCreate
 
@@ -20,7 +21,7 @@ def test_category_schema_create(generate_fake_category):
     category = CategorySchemaCreate(**generate_fake_category)
 
     # Testando se os campos estão corretos no objeto criado
-    assert category.uuid == generate_fake_category["uuid"]
+    assert category.uuid == UUID(generate_fake_category["uuid"])
     assert category.name == generate_fake_category["name"]
     assert category.slug == generate_fake_category["slug"]
     assert category.created_at == generate_fake_category["created_at"]
@@ -56,7 +57,7 @@ def test_category_schema_create_error():
         CategorySchemaCreate(**{"name": 1, "slug": 1})
 
 
-def test_category_schema_update(generate_fake_category):
+def test_category_schema_update(generate_fake_category: Dict[str, Any]):
     """
     Teste de criação de um objeto CategorySchemaUpdate
 
@@ -70,9 +71,6 @@ def test_category_schema_update(generate_fake_category):
         slug=generate_fake_category["slug"],
     )
 
-    # Print do objeto criado
-    print(category)
-
     # Testes de sucesso
     assert isinstance(category, CategorySchemaUpdate)
     assert category.name == generate_fake_category["name"]
@@ -81,7 +79,7 @@ def test_category_schema_update(generate_fake_category):
     assert category.updated_at is None
 
 
-def test_category_schema_read(generate_fake_category):
+def test_category_schema_read(generate_fake_category: Dict[str, Any]):
     """
     Teste de criação de um objeto CategorySchemaRead
 
@@ -93,7 +91,7 @@ def test_category_schema_read(generate_fake_category):
     category = CategorySchemaRead(**generate_fake_category)
 
     # Testando se os campos estão corretos no objeto criado
-    assert category.uuid == generate_fake_category["uuid"]
+    assert category.uuid == UUID(generate_fake_category["uuid"])
     assert category.name == generate_fake_category["name"]
     assert category.slug == generate_fake_category["slug"]
     assert category.created_at == generate_fake_category["created_at"]

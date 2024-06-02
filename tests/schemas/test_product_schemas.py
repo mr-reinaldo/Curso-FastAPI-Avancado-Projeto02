@@ -1,4 +1,5 @@
 from pytest import raises
+from typing import Dict, Any
 from pydantic import ValidationError
 from app.schemas.product_schema import (
     ProductSchemaCreate,
@@ -9,7 +10,7 @@ from uuid import UUID
 from datetime import datetime
 
 
-def test_product_schema_create(generate_fake_product):
+def test_product_schema_create(generate_fake_product: Dict[str, Any]):
     """
     Teste de criação de um objeto ProductSchemaCreate
 
@@ -20,8 +21,8 @@ def test_product_schema_create(generate_fake_product):
     product = ProductSchemaCreate(**generate_fake_product)
 
     # Testando se os campos estão corretos no objeto criado
-    assert product.uuid == generate_fake_product["uuid"]
-    assert product.category_uuid == generate_fake_product["category_uuid"]
+    assert product.uuid == UUID(generate_fake_product["uuid"])
+    assert product.category_uuid == UUID(generate_fake_product["category_uuid"])
     assert product.name == generate_fake_product["name"]
     assert product.slug == generate_fake_product["slug"]
     assert product.price == generate_fake_product["price"]
@@ -43,7 +44,9 @@ def test_product_schema_create(generate_fake_product):
     assert isinstance(product.updated_at, datetime)
 
 
-def test_product_schema_create_missing_required_fields(generate_fake_product):
+def test_product_schema_create_missing_required_fields(
+    generate_fake_product: Dict[str, Any]
+):
     """
     Teste de criação de um objeto ProductSchemaCreate
 
@@ -68,7 +71,7 @@ def test_product_schema_create_missing_required_fields(generate_fake_product):
         ProductSchemaCreate(**generate_fake_product)
 
 
-def test_product_schema_update(generate_fake_product):
+def test_product_schema_update(generate_fake_product: Dict[str, Any]):
     """
     Teste de criação de um objeto ProductSchemaUpdate
 
@@ -78,7 +81,7 @@ def test_product_schema_update(generate_fake_product):
 
     # Criação de um objeto ProductSchemaUpdate
     product = ProductSchemaUpdate(
-        category_uuid=generate_fake_product["category_uuid"],
+        category_uuid=UUID(generate_fake_product["category_uuid"]),
         name=generate_fake_product["name"],
         slug=generate_fake_product["slug"],
         price=generate_fake_product["price"],
@@ -90,7 +93,7 @@ def test_product_schema_update(generate_fake_product):
 
     # Testes de sucesso
 
-    assert product.category_uuid == generate_fake_product["category_uuid"]
+    assert product.category_uuid == UUID(generate_fake_product["category_uuid"])
     assert product.name == generate_fake_product["name"]
     assert product.slug == generate_fake_product["slug"]
     assert product.price == generate_fake_product["price"]
@@ -111,7 +114,7 @@ def test_product_schema_update(generate_fake_product):
     assert product.updated_at is None
 
 
-def test_product_schema_read(generate_fake_product):
+def test_product_schema_read(generate_fake_product: Dict[str, Any]):
     """
     Teste de criação de um objeto ProductSchemaRead
 
@@ -123,8 +126,8 @@ def test_product_schema_read(generate_fake_product):
     product = ProductSchemaRead(**generate_fake_product)
 
     # Testando se os campos estão corretos no objeto criado
-    assert product.uuid == generate_fake_product["uuid"]
-    assert product.category_uuid == generate_fake_product["category_uuid"]
+    assert product.uuid == UUID(generate_fake_product["uuid"])
+    assert product.category_uuid == UUID(generate_fake_product["category_uuid"])
     assert product.name == generate_fake_product["name"]
     assert product.slug == generate_fake_product["slug"]
     assert product.price == generate_fake_product["price"]
@@ -146,7 +149,9 @@ def test_product_schema_read(generate_fake_product):
     assert isinstance(product.updated_at, datetime)
 
 
-def test_product_schema_read_missing_required_fields(generate_fake_product):
+def test_product_schema_read_missing_required_fields(
+    generate_fake_product: Dict[str, Any]
+):
     """
     Teste de criação de um objeto ProductSchemaRead
 

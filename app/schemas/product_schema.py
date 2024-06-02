@@ -27,7 +27,7 @@ class ProductSchemaBase(BaseModel):
     @field_validator("name")
     def validate_name(cls, value):
         # Nome do produto deve conter apenas letras e no minimo 3 caracteres e no máximo 20 e pode conter espaços
-        if not match(r"^[a-zA-Z\s]{3,50}$", value):
+        if not match(r"^[a-zA-Z0-9\s]{3,50}$", value):
             raise ValueError("Invalid product name.")
 
         return value
@@ -35,7 +35,7 @@ class ProductSchemaBase(BaseModel):
     @field_validator("slug")
     def validate_slug(cls, value):
         # O slug deve conter apenas letras minúsculas, traços e sublinhados
-        if not match(r"^([a-z]|-|_)+$", value):
+        if not match(r"^([a-z0-9]|-|_)+$", value):
             raise ValueError("Invalid product slug.")
 
         return value
